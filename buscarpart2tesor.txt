@@ -1,0 +1,99 @@
+<?php
+session_start();
+include("conect.php");
+?>
+
+<?php
+//include("conect.php");
+//$link=Conectarse();
+
+$iddepartamento = $_GET['param3_id'];
+$user="root";
+$pass="pirineos";
+$server="localhost";
+$bd="indicadores";
+$link=mysqli_connect($server,$user,$pass,$bd);
+
+
+$usuario=$user;
+$contrasena=$pass;
+$departamento=$departamento;
+
+//Inicializar la variable del año, en le año actual
+$extraido[5]=date('Y', time());
+
+////////BUSCAR////////////////////////////////////////////////////////buscar
+if ($Buscar == "Buscar") 
+{	
+//obtener EL NOMBRE DE DEPARTAMENTO Y EL INDICADOR
+	///////////////	
+	
+	$mesnum=0;
+	if($mes=="Enero")
+	$mesnum=1;
+	if($mes=="Febrero")
+	$mesnum=2;
+	if($mes=="Marzo")
+	$mesnum=3;
+	if($mes=="Abril")
+	$mesnum=4;
+	if($mes=="Mayo")
+	$mesnum=5;
+	if($mes=="Junio")
+	$mesnum=6;
+	if($mes=="Julio")
+	$mesnum=7;
+	if($mes=="Agosto")
+	$mesnum=8;
+	if($mes=="Septiembre")
+	$mesnum=9;
+	if($mes=="Octubre")
+	$mesnum=10;
+	if($mes=="Noviembre")
+	$mesnum=11;
+	if($mes=="Diciembre")
+	$mesnum=12;
+	
+	$mesnum=$mes;
+	
+	$query4=mysqli_query($link,"Select mes from mes where idmes='".$mesnum."'");
+	mysqli_data_seek($query4,0);
+    $mesmes = mysqli_fetch_row($query4);
+	$mes=$mesmes[0];
+
+   $_SESSION['meses']=$mesnum;
+	
+	$query2=mysqli_query($link,"Select * from anios where idanio='".$year1."'");
+	mysqli_data_seek($query2,0);
+    $anio = mysqli_fetch_row($query2);
+	$year1=$anio[1];
+	
+		$q2="SELECT FORMAT(proveedores, 2),FORMAT(cadenas, 2), FORMAT(trenes, 2),FORMAT(garantias, 2),FORMAT(creditos, 2)  FROM tesorer1 WHERE year1 ='".$year1."' and idmes=".$mesnum;
+		$tabla2 = mysqli_query($link,$q2);
+		$extraido2 = mysqli_fetch_row($tabla2);
+
+		$q="SELECT proveedores,cadenas,trenes,garantias,creditos FROM tesorer1 WHERE year1 ='".$year1."' and idmes=".$mesnum;
+		$tabla1 = mysqli_query($link,$q);
+		$extraido = mysqli_fetch_row($tabla1);
+	
+	$Resultado =" Tesoreria Tuvo en:\n Proveedores $".$extraido2[0]." \n Cadenas $".$extraido2[1]."\n Trenes $".$extraido2[2]."\n Garantias $".$extraido2[3]."\n Creditos $".$extraido2[4];
+	$departament=$proveedor;
+	$indicator=$producto;
+	$extraido[8]=$mes." del ".$year1;
+}
+
+if($Guardar == "Guardar")
+{
+	
+		$query2=mysqli_query($link,"Select * from anios where idanio='".$year1."'");
+		mysqli_data_seek($query2,0);
+		$anio = mysqli_fetch_row($query2);
+		$year1=$anio[1];
+	
+		$q = "UPDATE tesorer1 SET proveedores='$Proveedores', cadenas='$Cadenas', trenes='$Trenes', garantias='$Garantias', creditos='$Creditos' WHERE year1 ='".$year1."' and idmes='". $_SESSION['meses']."'";
+		$tabla1 = mysqli_query($link,$q);
+}
+
+
+
+?>
